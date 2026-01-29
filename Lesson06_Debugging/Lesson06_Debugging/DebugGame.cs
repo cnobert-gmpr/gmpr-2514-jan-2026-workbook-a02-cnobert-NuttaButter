@@ -26,9 +26,9 @@ public class DebugGame : Game
     protected override void Initialize()
     {
         _position = new Vector2(60f, 80f);
-        _dimensions = new Vector2(250f, 50f);
+        _dimensions = new Vector2(50f, 250f);
 
-        _speed = 120f;
+        _speed = 10f;
 
         base.Initialize();
     }
@@ -68,11 +68,9 @@ public class DebugGame : Game
 
     private void Move(GameTime gameTime)
     {
-        float seconds = (float)gameTime.TotalGameTime.TotalSeconds;
+        float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
         _position.X += _speed * seconds;
 
         base.Update(gameTime);
-
-        _position = new Vector2(60f, 80f);
     }
 }
