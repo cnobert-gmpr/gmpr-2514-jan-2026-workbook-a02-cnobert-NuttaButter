@@ -46,7 +46,9 @@ public class Ball
         // bounce the ball off left and right sides
         if(_position.X <= _playAreaBoundingBox.Left || _position.X >= _playAreaBoundingBox.Right)
         {
-            _direction.X *= -1;
+            // _direction.X *= -1;
+            _position.X = 325;
+            _position.Y = 225;
         }
         if(_position.Y <= _playAreaBoundingBox.Top || _position.Y >= _playAreaBoundingBox.Bottom)
         {
@@ -60,6 +62,7 @@ public class Ball
         spriteBatch.Draw(_texture, ballRectangle, Color.White);
     }
 
+    // have this return a boolean so we can tell if it collided with the paddle or not
     internal void ProcessCollision(Rectangle otherBoundingBox)
     {
         if (_collisionTimer >= _CollisionTimerInterval && BoundingBox.Intersects(otherBoundingBox))
