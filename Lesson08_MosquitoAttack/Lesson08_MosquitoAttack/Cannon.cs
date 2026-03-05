@@ -7,12 +7,31 @@ namespace Lesson08_MosquitoAttack;
 public class Cannon
 {
     private SimpleAnimation _animation;
-    private Vector2 _position;
+    private Vector2 _position, _direction;
     private Point _dimensions;
+    private float _speed;
 
-    internal void Initialize(Vector2 position)
+    internal Vector2 Direction
+    {
+        set
+        {
+            // cannon should only move horizontally
+            value.Y = 0;
+            _direction = value;
+            if(_direction.X < 0)
+            {
+              _animation.Reverse = true;  
+            } else
+            {
+                _animation.Reverse = false;
+            }
+        }
+    }
+
+    internal void Initialize(Vector2 position, float speed)
     {
         _position = position;
+        _speed = speed;
     }
 
     internal void LoadContent(ContentManager content)
@@ -24,7 +43,14 @@ public class Cannon
 
     internal void Update(GameTime gameTime)
     {
-        _animation.Update(gameTime);
+        float dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
+        _position += _direction * _speed * dt;
+
+        if(_direction != Vector2.Zero)
+        {
+           _animation.Update(gameTime); 
+        }
+        
     }
 
     internal void Draw(SpriteBatch spriteBatch)
