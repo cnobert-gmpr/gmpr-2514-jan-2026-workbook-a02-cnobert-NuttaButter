@@ -73,4 +73,14 @@ public class CannonBall
             _state = State.Flying;
         }
     }
+
+    internal bool ProcessCollision(Rectangle otherBoundingBox)
+    {
+        if(_state == State.Flying && this.BoundingBox.Intersects(otherBoundingBox))
+        {
+            _state = State.NotFlying;
+            return true;
+        }
+        return false;
+    }
 }
