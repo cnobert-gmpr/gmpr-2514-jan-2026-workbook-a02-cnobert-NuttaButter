@@ -5,45 +5,31 @@ using System.Collections.Generic;
 
 namespace Lesson08_MosquitoAttack;
 
-public class CannonBall
+public class CannonBall : Projectile
 {
     private Texture2D _texture;
-    private Vector2 _position;
-    private Vector2 _direction;
-    private float _speed;
-
-    private Rectangle _gameBoundingBox;
-
     private List<Vector2> _trailPositions;
     private float _trailTimer;
     private const float _TrailSpawnInterval = 0.1f;
     private const int _MaxTrailPositions = 12;
-
-    private enum State { Flying, NotFlying}
-    private State _state = State.NotFlying;
 
     internal Rectangle BoundingBox
     {
         get => new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
     }
 
-    internal bool Launchable { get => _state == State.NotFlying; }
-
-    internal void Initialize(float speed, Rectangle gameBoundingBox)
+    // override means hiding the parent method
+    internal override void Initialize(float speed, Rectangle gameBoundingBox)
     {
-        _position = Vector2.Zero;
-        _direction = Vector2.Zero;
-        _speed = speed;
-        _gameBoundingBox = gameBoundingBox;
-
+        base.Initialize(speed, gameBoundingBox);
         _trailPositions = new List<Vector2>();
         _trailTimer = 0;
     }
-    internal void LoadContent(ContentManager content)
+    internal override void LoadContent(ContentManager content)
     {
         _texture = content.Load<Texture2D>("CannonBall");
     }
-    internal void Update(GameTime gameTime)
+    internal override void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -73,7 +59,7 @@ public class CannonBall
                 break;
         }
     }
-    internal void Draw(SpriteBatch spriteBatch)
+    internal override void Draw(SpriteBatch spriteBatch)
     {
         switch(_state)
         {
@@ -105,17 +91,8 @@ public class CannonBall
             spriteBatch.Draw(_texture, centeredPosition, null, Color.Gray * (alpha * 0.5f), 0f, origin, scale, SpriteEffects.None, 0f);
         }
     }
-    internal void Shoot(Vector2 position, Vector2 direction)
-    {
-        if(_state == State.NotFlying)
-        {
-            _position = position;
-            _direction = direction;
-            _state = State.Flying;
-        }
-    }
 
-    internal bool ProcessCollision(Rectangle otherBoundingBox)
+    internal override bool ProcessCollision(Rectangle otherBoundingBox)
     {
         if(_state == State.Flying && this.BoundingBox.Intersects(otherBoundingBox))
         {
