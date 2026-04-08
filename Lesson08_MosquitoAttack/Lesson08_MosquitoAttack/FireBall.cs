@@ -7,14 +7,10 @@ namespace Lesson08_MosquitoAttack;
 public class FireBall : Projectile
 {
     private SimpleAnimation _animation;
-    private Point _dimensions;
-    internal Rectangle BoundingBox
-    {
-        get => new Rectangle((int)_position.X, (int)_position.Y, _dimensions.X, _dimensions.Y);
-    }
 
     internal override void Initialize(float speed, Rectangle gameBoundingBox)
     {
+        base.Initialize(speed, gameBoundingBox);
         _dimensions = new Point(5, 17);
     }
 
@@ -53,17 +49,6 @@ public class FireBall : Projectile
             case State.NotFlying:
                 break;
         }
-    }
-
-    internal override bool ProcessCollision(Rectangle boundingBox)
-    {
-        bool returnValue = false;
-        if(_state == State.Flying && BoundingBox.Intersects(boundingBox))
-        {
-            returnValue = true;
-            _state = State.NotFlying;
-        }
-        return returnValue;
     }
 
 }

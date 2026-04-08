@@ -9,11 +9,16 @@ public abstract class Projectile
     // the private access modifier hides from children
     // whatever we want the children to see will designate as protected
     protected Vector2 _position, _direction;
+    protected Point _dimensions;
     protected float _speed;
     protected Rectangle _gameBoundingBox;
     protected enum State { Flying, NotFlying}
     protected State _state = State.NotFlying;
     internal bool Launchable { get => _state == State.NotFlying; }
+    internal Rectangle BoundingBox
+    {
+        get => new Rectangle((int)_position.X, (int)_position.Y, _dimensions.X, _dimensions.Y);
+    }
 
     // virtual means the children class have the option to override
     internal virtual void Initialize(float speed, Rectangle gameBoundingBox)
@@ -42,5 +47,14 @@ public abstract class Projectile
         }
     }
 
-    internal abstract bool ProcessCollision(Rectangle otherBoundingBox);
+    internal virtual bool ProcessCollision(Rectangle boundingBox)
+    {
+        bool returnValue = false;
+        if(_state == State.Flying && BoundingBox.Intersects(boundingBox))
+        {
+            returnValue = true;
+            _state = State.NotFlying;
+        }
+        return returnValue;
+    }
 }
