@@ -8,15 +8,7 @@ namespace Lesson08_MosquitoAttack;
 public class Mosquito : Actor
 {
     private const int NumFireBalls = 10, UpperRandomFiringRange = 160;
-
-    private Rectangle _gameBoundingBox;
-
-    private enum State { Alive, Poofing, Dead }
-    private State _state;
-    private FireBall[] _fireBalls;
     private Random _rng;
-
-    internal bool Alive { get => _state == State.Alive; }
 
     internal void Initialize(Vector2 position, float speed, Vector2 direction, Rectangle gameBoundingBox)
     {
@@ -26,11 +18,11 @@ public class Mosquito : Actor
         _gameBoundingBox = gameBoundingBox;
         _state = State.Alive;
 
-        _fireBalls = new FireBall[NumFireBalls];
+        _projectiles = new FireBall[NumFireBalls];
         for(int c = 0; c < NumFireBalls; c++)
         {
-            _fireBalls[c] = new FireBall();
-            _fireBalls[c].Initialize(50, _gameBoundingBox);
+            _projectiles[c] = new FireBall();
+            _projectiles[c].Initialize(50, _gameBoundingBox);
         }
         _rng = new Random();
     }
@@ -47,7 +39,7 @@ public class Mosquito : Actor
         _animationPoofing = 
             new SimpleAnimation(texture, texture.Width / 8, texture.Height, 8, 4);
 
-        foreach(FireBall fb in _fireBalls)
+        foreach(FireBall fb in _projectiles)
             fb.LoadContent(content);
     }
 
@@ -78,7 +70,7 @@ public class Mosquito : Actor
             case State.Dead:
                 break;
         }
-        foreach(FireBall fb in _fireBalls)
+        foreach(FireBall fb in _projectiles)
             fb.Update(gameTime);
     }
 
@@ -95,7 +87,7 @@ public class Mosquito : Actor
             case State.Dead:
                 break;
         }
-        foreach(FireBall fb in _fireBalls)
+        foreach(FireBall fb in _projectiles)
             fb.Draw(spriteBatch);
     }
 
@@ -110,7 +102,7 @@ public class Mosquito : Actor
 
     internal void Shoot()
     {
-        foreach(FireBall fb in _fireBalls)
+        foreach(FireBall fb in _projectiles)
         {
             if(fb.Launchable)
             {
