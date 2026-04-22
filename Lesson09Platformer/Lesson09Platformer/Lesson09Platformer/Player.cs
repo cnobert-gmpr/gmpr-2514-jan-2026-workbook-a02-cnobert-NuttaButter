@@ -8,7 +8,7 @@ namespace Lesson09Platformer;
 
 public class Player
 {
-    private const int _Speed = 150;
+    private const int _Speed = 150, _JumpVelocity = -130;
     private enum State {Idle, Walking, Jumping}
     private State _state;
     private bool _facingRight = true;
@@ -16,7 +16,8 @@ public class Player
     private Vector2 _position, _velocity, _dimensions;
     
     private Rectangle _gameBoundingBox;
-
+    
+    internal Vector2 Velocity { get => _velocity; }
     internal Rectangle BoundingBox
     {
         get {return new Rectangle((int)_position.X, (int)_position.Y, (int)_dimensions.X, (int)_dimensions.Y);}
@@ -107,7 +108,10 @@ public class Player
     {
         bool originalDirection = _facingRight;
         _velocity.X = direction * _Speed;
-        _facingRight = _velocity.X > 0;
+
+        if(_velocity.X != 0)
+            _facingRight = _velocity.X > 0;
+
         if(_state == State.Idle)
         {
             _animationCurrent = _animationWalk;
@@ -118,6 +122,11 @@ public class Player
             _animationCurrent.Reset();
     }
 
+    internal void MoveVertically(float direction)
+    {
+        _velocity.Y = direction * _Speed;
+    }
+
     internal void Stop()
     {
         _velocity.X = 0;
@@ -126,6 +135,30 @@ public class Player
             _state = State.Idle;
             _animationCurrent = _animationIdle;
             _animationCurrent.Reset();
+        }
+    }
+
+    internal void Land(Rectangle whatILandedOn)
+    {
+        if(_state == State.Jumping)
+        {
+            _position.Y = whatILandedOn.Top - _dimensions.Y + 1;
+            _velocity.Y = 0;
+            _state = State.Walking;
+        } 
+    }
+
+    internal void StandOn(Rectangle whatIAmStandingOn, float dt)
+    {
+        // the collider pushing upwards like a normal force from newton laws
+        _velocity.Y -= Platformer._Gravity * dt;
+    }
+
+    internal void Jump()
+    {
+        if(_state != State.Jumping)
+        {
+            _velocity.Y = _JumpVelocity;
         }
     }
 }
